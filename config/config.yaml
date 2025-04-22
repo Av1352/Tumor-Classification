@@ -1,0 +1,12 @@
+data:
+  train_dir: "data/train/"
+  train_labels: "data/train_labels.csv"
+  image_size: [96, 96]
+  batch_size: 128
+training:
+  validation_split: 0.2
+  learning_rate: 0.001
+results_dir: "results"
+explainability:
+  gradcam_layer: "conv2d_5"  # Updated to last Conv2D layer
+  shap_background_samples: 50
