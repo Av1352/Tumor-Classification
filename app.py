@@ -1,5 +1,4 @@
 import streamlit as st
-import tensorflow as tf
 import numpy as np
 from PIL import Image
 import cv2
@@ -41,13 +40,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Load model function (placeholder)
+# Load model function (demo version)
 @st.cache_resource
 def load_model():
-    # Replace with your actual model loading
-    # model = tf.keras.models.load_model('your_model.h5')
-    # return model
-    return None
+    # This is a demo version - no actual model loading
+    return "baseline_model.keras"
 
 def preprocess_image(image):
     """Preprocess image for model prediction"""
@@ -97,13 +94,24 @@ def predict_tumor(image, model=None):
     # Preprocess
     processed_img = preprocess_image(image)
     
-    # Make prediction (placeholder - replace with actual model)
-    if model is not None:
-        prediction = model.predict(processed_img)[0][0]
-    else:
-        # Demo prediction
-        np.random.seed(hash(str(processed_img.sum())) % 1000)
-        prediction = np.random.beta(2, 2)  # More realistic distribution
+    # Demo prediction based on image characteristics
+    # This creates a realistic demo without requiring actual model
+    img_array = np.array(image)
+    
+    # Simple heuristic for demo: darker images more likely to be tumors
+    avg_brightness = np.mean(img_array)
+    texture_variance = np.var(img_array)
+    
+    # Create pseudo-realistic prediction
+    base_score = (255 - avg_brightness) / 255  # Darker = higher tumor probability
+    texture_factor = min(texture_variance / 1000, 0.3)  # Texture adds to score
+    
+    # Add some randomness but keep it deterministic per image
+    seed = int(np.sum(img_array) % 1000)
+    np.random.seed(seed)
+    noise = np.random.normal(0, 0.1)
+    
+    prediction = np.clip(base_score + texture_factor + noise, 0, 1)
     
     return prediction
 
